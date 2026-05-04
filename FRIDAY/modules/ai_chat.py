@@ -1,27 +1,77 @@
 import google.generativeai as genai
+import os
+import sys
+import json
+from datetime import datetime
 
-genai.configure(api_key="AIzaSyDqYJGDDKjAWW5eX42NYGUB74EbbWS0zj0")
-model = genai.GenerativeModel("gemini-1.5-flash")
+sys.path.append(os.path.expanduser("~") + "/FRIDAY")
+from config import GEMINI_KEY
 
-conversation_history = [
-    "You are FRIDAY, Iron Man's AI assistant. Be helpful, polite, and answer as if you are talking to a human."
-]
+genai.configure(api_key=GEMINI_KEY)
+
+MEMORY_FILE = os.path.expanduser("~") + "/FRIDAY/memory/conversation.json"
+
+def load_history():
+    try:
+        if os.path.exists(MEMORY_FILE):
+            with open(MEMORY_FILE, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return []
+
+def save_history(history):
+    try:
+        os.makedirs(os.path.dirname(MEMORY_FILE), exist_ok=True)
+        with open(MEMORY_FILE, 'w') as f:
+            json.dump(history[-50:], f, indent=2)
+    except Exception as e:
+        print(f"Memory save error: {e}")
 
 def ai_chat(question):
     try:
-        conversation_history.append(f"User: {question}")
-        prompt = "\n".join(conversation_history) + "\nFRIDAY:"
-        response = model.generate_content(prompt)
+        history = load_history()
+        history_text = ""
+        for h in history[-10:]:
+            role = "User" if h["role"] == "user" else "FRIDAY"
+            history_text += f"{role}: {h['content']}\n"
+
+        full_prompt = f"""You are FRIDAY, an advanced AI assistant like Iron Man's AI.
+You are smart, helpful, professional and slightly witty.
+Keep answers SHORT — max 3 sentences for voice response.
+Current date and time: {datetime.now().strftime("%B %d %Y, %I:%M %p")}
+
+Previous conversation:
+{history_text}
+
+User: {question}
+FRIDAY:"""
+
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(full_prompt)
         answer = response.text.strip()
-        conversation_history.append(f"FRIDAY: {answer}")
+
+        history.append({"role": "user",      "content": question})
+        history.append({"role": "assistant", "content": answer})
+        save_history(history)
         return answer
+
     except Exception as e:
         return f"AI error: {e}"
 
 def write_code(instruction):
     try:
-        prompt = f"Write complete Python code for: {instruction}\nReturn ONLY raw code. No explanation. No markdown."
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        prompt = f"Write complete Python code for: {instruction}\nReturn ONLY raw code. No explanation. No markdown. No backticks."
         response = model.generate_content(prompt)
-        return response.text
+        return response.text.strip()
     except Exception as e:
         return f"# Error: {e}"
+
+def clear_memory():
+    try:
+        if os.path.exists(MEMORY_FILE):
+            os.remove(MEMORY_FILE)
+        return "Memory cleared"
+    except:
+        return "Could not clear memory"

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.db
+memory/friday.db
+memory/conversation.json
+outputs/
+*.mp3
+*.wav
+.env
+config.py
