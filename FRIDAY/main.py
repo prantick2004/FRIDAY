@@ -14,22 +14,24 @@ def say(text):
     clean = text.replace('"', '').replace("'", "")
     os.system(f'espeak -s 150 -v en "{clean}" 2>/dev/null')
 
+
 def listen():
     try:
         import speech_recognition as sr
         r = sr.Recognizer()
         with sr.Microphone() as source:
             print("\nListening... speak now")
-            r.adjust_for_ambient_noise(source, duration=0.3)
+            r.energy_threshold = 300
+            r.dynamic_energy_threshold = False
+            r.adjust_for_ambient_noise(source, duration=0.2)
             try:
-                audio = r.listen(source, timeout=6)
+                audio = r.listen(source, timeout=8, phrase_time_limit=5)
                 command = r.recognize_google(audio).lower()
                 print(f"You said: {command}")
                 return command
             except sr.WaitTimeoutError:
                 return ""
             except sr.UnknownValueError:
-                print("Could not understand")
                 return ""
             except Exception as e:
                 print(f"Error: {e}")
@@ -130,6 +132,53 @@ def process_command(command):
     elif "open spotify"     in command: open_app("spotify")
     elif "open discord"     in command: open_app("discord")
     elif "open telegram"    in command: open_app("telegram")
+    elif "open gmail" in command:
+        webbrowser.open("https://mail.google.com")
+        say("Opening Gmail sir")
+
+    elif "open youtube" in command:
+        webbrowser.open("https://youtube.com")
+        say("Opening YouTube sir")
+
+    elif "open whatsapp" in command:
+        webbrowser.open("https://web.whatsapp.com")
+        say("Opening WhatsApp sir")
+
+    elif "open instagram" in command:
+        webbrowser.open("https://instagram.com")
+        say("Opening Instagram sir")
+
+    elif "open facebook" in command:
+        webbrowser.open("https://facebook.com")
+        say("Opening Facebook sir")
+
+    elif "open twitter" in command:
+        webbrowser.open("https://twitter.com")
+        say("Opening Twitter sir")
+
+    elif "open github" in command:
+        webbrowser.open("https://github.com")
+        say("Opening GitHub sir")
+
+    elif "open netflix" in command:
+        webbrowser.open("https://netflix.com")
+        say("Opening Netflix sir")
+
+    elif "open" in command and "." in command:
+        words = command.replace("open","").strip().split()
+        for word in words:
+            if "." in word:
+                url = word if word.startswith("http") else "https://" + word
+                webbrowser.open(url)
+                say(f"Opening {word} sir")
+                break
+
+    elif "go to" in command:
+        site = command.replace("go to","").strip()
+        if not site.startswith("http"):
+            site = "https://" + site
+        webbrowser.open(site)
+        say(f"Opening {site} sir")
 
     # System
     elif "battery" in command or "system status" in command:
@@ -239,6 +288,73 @@ def process_command(command):
         say("FRIDAY going offline. Goodbye sir.")
         exit()
 
+        # Gmail
+    elif "read email" in command or "check email" in command:
+        say("Checking your emails sir.")
+        from gmail_control import read_emails
+        emails = read_emails(3)
+        for e in emails:
+            say(e)
+
+    elif "search email" in command:
+        query = command.replace("search email","").strip()
+        say(f"Searching emails for {query}")
+        from gmail_control import search_emails
+        emails = search_emails(query)
+        for e in emails:
+            say(e)
+
+    elif "send email" in command:
+        say("Who should I send to? Type the email address.")
+        to = input("To: ").strip()
+        say("What is the subject?")
+        subject = input("Subject: ").strip()
+        say("What should I write?")
+        body = input("Body: ").strip()
+        from gmail_control import send_email
+        result = send_email(to, subject, body)
+        say(result)
+
+    # Calendar
+    elif "today events" in command or "my schedule" in command:
+        say("Checking your schedule for today.")
+        from calendar_control import get_todays_events
+        events = get_todays_events()
+        for e in events:
+            say(e)
+
+    elif "upcoming events" in command or "this week" in command:
+        say("Checking upcoming events.")
+        from calendar_control import get_upcoming_events
+        events = get_upcoming_events(7)
+        for e in events:
+            say(e)
+
+    elif "add event" in command:
+        task = command.replace("add event","").strip()
+        say("What date? Type in format 2026-05-10")
+        date = input("Date: ").strip()
+        say("What time? Type in format 14:00")
+        time = input("Time: ").strip()
+        from calendar_control import add_event
+        result = add_event(task, date, time)
+        say(result)
+
+    # Reminders
+    elif "remind me" in command:
+        from reminders import add_reminder
+        parts = command.replace("remind me","").strip()
+        say("How many minutes from now?")
+        mins = input("Minutes: ").strip()
+        result = add_reminder(parts, int(mins))
+        say(result)
+
+    elif "my reminders" in command:
+        from reminders import get_pending_reminders
+        pending = get_pending_reminders()
+        for p in pending:
+            say(p)
+
     # Gemini AI fallback
     else:
         from ai_chat import ai_chat
@@ -266,6 +382,8 @@ def morning_briefing():
 
 # ── START ─────────────────────────────────────────────
 if __name__ == "__main__":
+    from reminders import check_reminders
+    check_reminders(say)
     morning_briefing()
     while True:
         cmd = listen()

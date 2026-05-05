@@ -8,3 +8,6 @@ outputs/
 *.wav
 .env
 config.py
+credentials.json
+token_gmail.json
+token_calendar.json
