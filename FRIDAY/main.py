@@ -288,11 +288,16 @@ def process_command(command):
         say("FRIDAY going offline. Goodbye sir.")
         exit()
 
-        # ── PC CONTROL ────────────────────────────────────
-    elif "click" in command and "mouse" in command:
+     # ── PC CONTROL ────────────────────────────────────
+    elif "left click" in command or "mouse click" in command or "click mouse" in command:
         from pc_control import mouse_click
-        result = mouse_click()
-        say(result)
+        result = mouse_click(button='left')
+        say("Left clicked")
+
+    elif "right click" in command:
+        from pc_control import right_click
+        result = right_click()
+        say("Right clicked")
 
     elif "scroll up" in command:
         from pc_control import mouse_scroll
