@@ -288,6 +288,156 @@ def process_command(command):
         say("FRIDAY going offline. Goodbye sir.")
         exit()
 
+        # ── PC CONTROL ────────────────────────────────────
+    elif "click" in command and "mouse" in command:
+        from pc_control import mouse_click
+        result = mouse_click()
+        say(result)
+
+    elif "scroll up" in command:
+        from pc_control import mouse_scroll
+        result = mouse_scroll("up")
+        say(result)
+
+    elif "scroll down" in command:
+        from pc_control import mouse_scroll
+        result = mouse_scroll("down")
+        say(result)
+
+    elif "right click" in command:
+        from pc_control import right_click
+        result = right_click()
+        say(result)
+
+    elif "double click" in command:
+        from pc_control import double_click
+        result = double_click()
+        say(result)
+
+    elif "switch window" in command or "next window" in command:
+        from pc_control import switch_window
+        result = switch_window()
+        say(result)
+
+    elif "minimize" in command:
+        from pc_control import minimize_window
+        result = minimize_window()
+        say(result)
+
+    elif "close window" in command:
+        from pc_control import close_window
+        result = close_window()
+        say(result)
+
+    elif "press enter" in command:
+        from pc_control import press_key
+        press_key('enter')
+        say("Enter pressed")
+
+    elif "press escape" in command:
+        from pc_control import press_key
+        press_key('escape')
+        say("Escape pressed")
+
+    elif "press space" in command:
+        from pc_control import press_key
+        press_key('space')
+        say("Space pressed")
+
+    elif "select all" in command:
+        from pc_control import select_all
+        select_all()
+        say("Selected all")
+
+    elif "copy" in command:
+        from pc_control import copy_text
+        copy_text()
+        say("Copied")
+
+    elif "paste" in command:
+        from pc_control import paste_text
+        paste_text()
+        say("Pasted")
+
+    elif "undo" in command:
+        from pc_control import undo
+        undo()
+        say("Undone")
+
+    elif "save" in command:
+        from pc_control import save_file
+        save_file()
+        say("Saved")
+
+    elif "type" in command:
+        text = command.replace("type","").strip()
+        from pc_control import type_text
+        type_text(text)
+        say(f"Typed {text}")
+
+    # ── SCREEN ────────────────────────────────────────
+    elif "screenshot" in command:
+        from pc_control import take_screenshot
+        path = take_screenshot()
+        say(f"Screenshot saved to outputs folder")
+
+    elif "read screen" in command:
+        say("Reading screen text sir")
+        from pc_control import read_screen_text
+        text = read_screen_text()
+        say(f"Screen says: {text[:200]}")
+
+    # ── RUNNING APPS ──────────────────────────────────
+    elif "running apps" in command or "what is open" in command:
+        from pc_control import get_running_apps
+        apps = get_running_apps()
+        say("Currently open:")
+        for a in apps[:5]:
+            say(a)
+
+    elif "top processes" in command or "cpu processes" in command:
+        from pc_control import get_system_processes
+        procs = get_system_processes()
+        say("Top CPU processes:")
+        for p in procs:
+            say(p)
+
+    elif "kill" in command or "force close" in command:
+        app = command.replace("kill","").replace("force close","").strip()
+        from pc_control import kill_process
+        result = kill_process(app)
+        say(result)
+
+    # ── FILE SYSTEM ───────────────────────────────────
+    elif "create folder" in command:
+        name = command.replace("create folder","").strip()
+        path = os.path.expanduser("~") + f"/{name}"
+        from pc_control import create_folder
+        result = create_folder(path)
+        say(result)
+
+    elif "list folder" in command or "show files" in command:
+        from pc_control import list_directory
+        items = list_directory()
+        say(f"Home folder has {len(items)} items")
+        for i in items[:5]:
+            say(i)
+
+    elif "run command" in command:
+        cmd = command.replace("run command","").strip()
+        say(f"Running {cmd}")
+        from pc_control import run_terminal_command
+        result = run_terminal_command(cmd)
+        say(result[:150])
+
+    elif "run file" in command:
+        name = command.replace("run file","").strip()
+        path = os.path.expanduser("~") + f"/FRIDAY/outputs/{name}"
+        from pc_control import run_python
+        say(f"Running {name}")
+        result = run_python(path)
+        say(result[:150])
+
         # Gmail
     elif "read email" in command or "check email" in command:
         say("Checking your emails sir.")
