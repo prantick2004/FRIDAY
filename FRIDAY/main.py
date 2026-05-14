@@ -391,54 +391,48 @@ def process_command(command):
     # ── WhatsApp ──────────────────────────────────────
 
     elif "send message" in command or "message to" in command:
-        name = ""
+        name_str = ""
         for phrase in ["send message to", "message to", "send a message to"]:
             if phrase in command:
-                name = command.replace(phrase,"").strip()
+                name_str = command.replace(phrase,"").strip()
                 break
 
-        if not name:
-            say("Who should I send message to?")
-            name = listen()
+        while True:
+            if not name_str:
+                say("Who should I send message to? You can say multiple names using 'and'.")
+                name_str = listen()
 
-        if name:
-            say(f"What message should I send to {name}?")
-            message = listen()
+            if name_str:
+                # Split by "and" in case of multiple recipients
+                names = [n.strip() for n in name_str.split(" and ") if n.strip()]
+                
+                say(f"Please tell me the message you want to send to these {len(names)} people.")
+                message = listen()
 
-            if message:
-                say(f"Sending message to {name}. Please do not touch keyboard or mouse. Wait sir.")
-                time.sleep(1)
-                from whatsapp_control import send_whatsapp_by_name
-                result = send_whatsapp_by_name(name, message)
-                say(result)
+                if message:
+                    from whatsapp_control import send_whatsapp_by_name
+                    is_first = True
+                    for name in names:
+                        say(f"Sending message to {name}. Please wait sir.")
+                        time.sleep(1)
+                        result = send_whatsapp_by_name(name, message, is_first=is_first)
+                        if result == "ContactNotFound":
+                            say(f"I could not find the person named {name}. Skipping them. Please check spelling.")
+                        else:
+                            say(result)
+                        is_first = False
+                else:
+                    say("No message heard. Please try again.")
             else:
-                say("No message heard. Please try again.")
-        else:
-            say("No contact name heard. Please try again.")
-                    # Extract name from command
-        name = ""
-        for word in ["send message to", "message to", "send a message to"]:
-            if word in command:
-                name = command.replace(word,"").strip()
+                say("No contact name heard. Please try again.")
+
+            say("Do you want to send any other message?")
+            ans = listen()
+            if ans and ("yes" in ans or "yeah" in ans or "sure" in ans):
+                name_str = "" # Reset to prompt for a new name in the next loop iteration
+            else:
+                say("Okay, I am ready for your next command.")
                 break
-
-        if not name:
-            say("Who should I send message to?")
-            name = listen()
-
-        if name:
-            say(f"What message should I send to {name}?")
-            message = listen()
-
-            if message:
-                say(f"Sending message to {name}. Please wait sir.")
-                from whatsapp_control import send_whatsapp_by_name
-                result = send_whatsapp_by_name(name, message)
-                say(result)
-            else:
-                say("No message heard. Please try again.")
-        else:
-            say("No contact name heard. Please try again.")
 
     elif "save contact" in command:
         try:

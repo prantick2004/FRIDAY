@@ -4,17 +4,20 @@ import webbrowser
 import subprocess
 import pyautogui
 
-def send_whatsapp_by_name(name, message):
+def send_whatsapp_by_name(name, message, is_first=True):
     try:
-        # Step 1 - Open WhatsApp Web in existing tab
-        subprocess.Popen(['google-chrome', '--new-tab', 'https://web.whatsapp.com'])
-        time.sleep(8)  # Wait for WhatsApp to fully load
+        if is_first:
+            # Step 1 - Open WhatsApp Web in existing tab
+            subprocess.Popen(['google-chrome', '--new-tab', 'https://web.whatsapp.com'])
+            time.sleep(8)  # Wait for WhatsApp to fully load
 
-        # Step 2 - Make sure Chrome is focused
-        pyautogui.hotkey('super', 'd')  # minimize all first
-        time.sleep(0.5)
-        pyautogui.hotkey('super', 'd')  # restore
-        time.sleep(1)
+            # Step 2 - Make sure Chrome is focused
+            pyautogui.hotkey('super', 'd')  # minimize all first
+            time.sleep(0.5)
+            pyautogui.hotkey('super', 'd')  # restore
+            time.sleep(1)
+        else:
+            time.sleep(1)
 
         # Step 3 - Click search box in WhatsApp
         # Search box is at top left of WhatsApp Web
@@ -37,7 +40,35 @@ def send_whatsapp_by_name(name, message):
         pyautogui.press('enter')
         time.sleep(2)
 
-        # Step 7 - (Removed: Pressing enter above already focuses the message input box. Clicking risks losing focus)
+        # Step 7 - Check if focus is still in the search box (i.e. name not found)
+        try:
+            import tkinter as tk
+            root = tk.Tk()
+            root.withdraw()
+            root.clipboard_clear()
+            root.clipboard_append("EMPTY_CLIPBOARD")
+            root.update()
+            
+            pyautogui.hotkey('ctrl', 'a')
+            time.sleep(0.2)
+            pyautogui.hotkey('ctrl', 'c')
+            time.sleep(0.2)
+            
+            copied = root.clipboard_get().strip()
+            root.destroy()
+        except:
+            copied = ""
+        pyautogui.press('right') # unselect
+
+        if name.lower() in copied.lower() and copied.lower() != "empty_clipboard":
+            # Search box is still focused and contains the name. Not found!
+            pyautogui.hotkey('ctrl', 'a')
+            time.sleep(0.2)
+            pyautogui.press('delete')
+            time.sleep(0.2)
+            pyautogui.press('escape') # exit search
+            return "ContactNotFound"
+            
         time.sleep(1)
 
         # Step 8 - Type message slowly
