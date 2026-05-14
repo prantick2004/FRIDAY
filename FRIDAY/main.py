@@ -6,6 +6,7 @@ import webbrowser
 import datetime
 import tempfile
 import json
+import time
 
 sys.path.append(os.path.expanduser("~") + "/FRIDAY/modules")
 sys.path.append(os.path.expanduser("~") + "/FRIDAY/memory")
@@ -388,34 +389,90 @@ def process_command(command):
             say(p)
 
     # ── WhatsApp ──────────────────────────────────────
-    elif "send whatsapp" in command:
-        say("Type the contact name clearly.")
-        name = input("Contact Name: ").strip()
-        say("Type your message.")
-        message = input("Message: ").strip()
-        if name and message:
-            from whatsapp_control import send_whatsapp_to_contact
-            result = send_whatsapp_to_contact(name, message)
-            say(result)
+
+    elif "send message" in command or "message to" in command:
+        name = ""
+        for phrase in ["send message to", "message to", "send a message to"]:
+            if phrase in command:
+                name = command.replace(phrase,"").strip()
+                break
+
+        if not name:
+            say("Who should I send message to?")
+            name = listen()
+
+        if name:
+            say(f"What message should I send to {name}?")
+            message = listen()
+
+            if message:
+                say(f"Sending message to {name}. Please do not touch keyboard or mouse. Wait sir.")
+                time.sleep(1)
+                from whatsapp_control import send_whatsapp_by_name
+                result = send_whatsapp_by_name(name, message)
+                say(result)
+            else:
+                say("No message heard. Please try again.")
         else:
-            say("Name or message was empty. Please try again.")
+            say("No contact name heard. Please try again.")
+                    # Extract name from command
+        name = ""
+        for word in ["send message to", "message to", "send a message to"]:
+            if word in command:
+                name = command.replace(word,"").strip()
+                break
+
+        if not name:
+            say("Who should I send message to?")
+            name = listen()
+
+        if name:
+            say(f"What message should I send to {name}?")
+            message = listen()
+
+            if message:
+                say(f"Sending message to {name}. Please wait sir.")
+                from whatsapp_control import send_whatsapp_by_name
+                result = send_whatsapp_by_name(name, message)
+                say(result)
+            else:
+                say("No message heard. Please try again.")
+        else:
+            say("No contact name heard. Please try again.")
 
     elif "save contact" in command:
-        say("Type the contact name clearly.")
-        name = input("Contact Name: ").strip()
-        say("Type phone number with country code. Example plus 91 9876543210")
-        phone = input("Phone Number: ").strip()
-        if name and phone:
-            from whatsapp_control import save_contact
-            result = save_contact(name, phone)
-            say(result)
-            contacts_path = os.path.expanduser("~") + "/FRIDAY/memory/contacts.json"
-            with open(contacts_path, 'r') as f:
-                contacts = json.load(f)
-            print(f"All saved contacts: {contacts}")
-            say(f"Contact {name} saved successfully")
-        else:
-            say("Name or phone was empty. Please try again.")
+        try:
+            part = command.replace("save contact","").strip()
+            words = part.split()
+
+            if len(words) >= 2:
+                name = words[0]
+                # everything after name = phone
+                phone = "".join(words[1:])
+                # clean phone
+                phone = phone.replace("plus","").replace(" ","")
+                if not phone.startswith("+"):
+                    phone = "+" + phone
+
+                print(f"Detected name: {name}")
+                print(f"Detected phone: {phone}")
+
+                from whatsapp_control import save_contact
+                save_contact(name, phone)
+
+                # verify
+                contacts_path = os.path.expanduser("~") + "/FRIDAY/memory/contacts.json"
+                with open(contacts_path, 'r') as f:
+                    saved = json.load(f)
+                print(f"Contacts file now: {saved}")
+                say(f"Contact {name} saved")
+
+            else:
+                say("Say full command. Example: save contact Prantick plus919876543210")
+
+        except Exception as e:
+            print(f"Error: {e}")
+            say("Could not save contact")
 
     # ── Spotify ───────────────────────────────────────
     elif "play" in command and "spotify" in command:

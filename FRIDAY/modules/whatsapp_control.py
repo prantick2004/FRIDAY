@@ -1,68 +1,75 @@
-import pywhatkit
-import datetime
 import os
-import json
+import time
+import webbrowser
+import subprocess
+import pyautogui
 
-CONTACTS_FILE = os.path.expanduser("~") + "/FRIDAY/memory/contacts.json"
-
-def load_contacts():
+def send_whatsapp_by_name(name, message):
     try:
-        if os.path.exists(CONTACTS_FILE):
-            with open(CONTACTS_FILE, 'r') as f:
-                return json.load(f)
-    except:
-        pass
-    return {}
+        # Step 1 - Open WhatsApp Web in existing tab
+        subprocess.Popen(['google-chrome', '--new-tab', 'https://web.whatsapp.com'])
+        time.sleep(8)  # Wait for WhatsApp to fully load
+
+        # Step 2 - Make sure Chrome is focused
+        pyautogui.hotkey('super', 'd')  # minimize all first
+        time.sleep(0.5)
+        pyautogui.hotkey('super', 'd')  # restore
+        time.sleep(1)
+
+        # Step 3 - Click search box in WhatsApp
+        # Search box is at top left of WhatsApp Web
+        pyautogui.hotkey('ctrl', 'alt', '/')
+        time.sleep(2)
+
+        # Step 4 - Clear search box first
+        pyautogui.hotkey('ctrl', 'a')
+        time.sleep(0.3)
+        pyautogui.press('delete')
+        time.sleep(0.3)
+
+        # Step 5 - Type contact name slowly
+        for char in name:
+            pyautogui.press(char)
+            time.sleep(0.15)
+        time.sleep(3)
+
+        # Step 6 - Press Enter to open chat
+        pyautogui.press('enter')
+        time.sleep(2)
+
+        # Step 7 - (Removed: Pressing enter above already focuses the message input box. Clicking risks losing focus)
+        time.sleep(1)
+
+        # Step 8 - Type message slowly
+        for char in message:
+            pyautogui.press(char)
+            time.sleep(0.05)
+        time.sleep(1)
+
+        # Step 9 - Send
+        pyautogui.press('enter')
+        time.sleep(1)
+
+        return f"Message sent to {name} successfully"
+
+    except Exception as e:
+        return f"WhatsApp error: {e}"
 
 def save_contact(name, phone):
+    import json
+    CONTACTS_FILE = os.path.expanduser("~") + "/FRIDAY/memory/contacts.json"
     try:
-        contacts = load_contacts()
-        name = name.strip()
-        phone = phone.strip()
-        if not phone.startswith("+"):
-            phone = "+" + phone
-        contacts[name.lower()] = phone
-        contacts[name] = phone
+        contacts = {}
+        if os.path.exists(CONTACTS_FILE):
+            with open(CONTACTS_FILE, 'r') as f:
+                contacts = json.load(f)
+        contacts[name.lower().strip()] = phone.strip()
         os.makedirs(os.path.dirname(CONTACTS_FILE), exist_ok=True)
         with open(CONTACTS_FILE, 'w') as f:
             json.dump(contacts, f, indent=2)
-        print(f"Contact saved: {name} = {phone}")
-        return f"Contact {name} saved with number {phone}"
+        return f"Contact {name} saved"
     except Exception as e:
-        print(f"Save error: {e}")
-        return f"Could not save contact: {e}"
-    
-def send_whatsapp_to_contact(name, message):
-    contacts = load_contacts()
-    # try multiple ways to find contact
-    name_lower = name.lower().strip()
-    phone = None
-    for key in contacts:
-        if key.lower().strip() == name_lower:
-            phone = contacts[key]
-            break
-    if phone:
-        return send_whatsapp(phone, message)
-    else:
-        print(f"Available contacts: {list(contacts.keys())}")
-        return f"Contact {name} not found. Say save contact to add."
+        return f"Error: {e}"
 
-def send_whatsapp(phone, message, wait_time=15):
-    try:
-        now = datetime.datetime.now()
-        hour = now.hour
-        minute = now.minute + 2
-        if minute >= 60:
-            minute = minute - 60
-            hour = hour + 1
-        pywhatkit.sendwhatmsg(
-            phone_no=phone,
-            message=message,
-            time_hour=hour,
-            time_min=minute,
-            wait_time=wait_time,
-            tab_close=True
-        )
-        return f"WhatsApp message sent"
-    except Exception as e:
-        return f"WhatsApp error: {e}"
+def send_whatsapp_to_contact(name, message):
+    return send_whatsapp_by_name(name, message)
