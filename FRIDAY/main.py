@@ -585,9 +585,23 @@ def morning_briefing():
 
 # ── START ─────────────────────────────────────────────
 if __name__ == "__main__":
+    # Start autonomous systems
+    from autonomous import start_all_autonomous
+    start_all_autonomous(say)
+
+    # Start reminder checker
     from reminders import check_reminders
     check_reminders(say)
+
+    # Start scheduler
+    from scheduler import run_scheduler, load_saved_schedules
+    load_saved_schedules(say)
+    run_scheduler(say)
+
+    # Morning briefing
     morning_briefing()
+
+    # Main loop
     while True:
         cmd = listen()
         if cmd:
