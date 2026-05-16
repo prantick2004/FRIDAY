@@ -167,7 +167,7 @@ def screen_logger():
 def start_all_autonomous(say_func):
     battery_guard(say_func)
     system_monitor(say_func)
-    idle_detection(say_func)
+    # idle_detection disabled — causes screen blink
     auto_morning_briefing(say_func)
     screen_logger()
     print("All autonomous systems started")

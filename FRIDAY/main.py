@@ -34,27 +34,67 @@ def say(text):
         clean = text.replace('"','').replace("'","")
         os.system(f'espeak -s 150 -v en "{clean}" 2>/dev/null')
 
+import ctypes
+
+def _suppress_alsa_warnings():
+    try:
+        ERROR_HANDLER_FUNC = ctypes.CFUNCTYPE(None, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p)
+        def py_error_handler(filename, line, function, err, fmt):
+            pass
+        c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
+        asound = ctypes.cdll.LoadLibrary('libasound.so.2')
+        asound.snd_lib_error_set_handler(c_error_handler)
+        return c_error_handler
+    except Exception:
+        return None
+
+_alsa_handler = _suppress_alsa_warnings()
+
+# Global variables to keep the microphone stream open continuously
+_speech_recognizer = None
+_speech_microphone = None
+_stream_opened = False
+
 def listen():
+    global _speech_recognizer, _speech_microphone, _stream_opened
     try:
         import speech_recognition as sr
-        r = sr.Recognizer()
-        with sr.Microphone() as source:
-            print("\nListening... speak now")
-            r.energy_threshold = 300
-            r.dynamic_energy_threshold = False
-            r.adjust_for_ambient_noise(source, duration=0.2)
-            try:
-                audio = r.listen(source, timeout=8, phrase_time_limit=5)
-                command = r.recognize_google(audio).lower()
-                print(f"You said: {command}")
-                return command
-            except sr.WaitTimeoutError:
-                return ""
-            except sr.UnknownValueError:
-                return ""
-            except Exception as e:
-                print(f"Error: {e}")
-                return ""
+        
+        if _speech_recognizer is None:
+            _speech_recognizer = sr.Recognizer()
+            _speech_microphone = sr.Microphone()
+            
+        if not _stream_opened:
+            # Manually enter the microphone context to open the stream ONCE
+            # and keep it open, which stops the GNOME mic indicator from blinking
+            _speech_microphone.__enter__()
+            _speech_recognizer.energy_threshold = 300
+            _speech_recognizer.dynamic_energy_threshold = False
+            _speech_recognizer.adjust_for_ambient_noise(_speech_microphone, duration=0.2)
+            _stream_opened = True
+
+        # Flush the background audio buffer so the AI doesn't hear itself
+        if hasattr(_speech_microphone, 'stream') and hasattr(_speech_microphone.stream, 'pyaudio_stream'):
+            while True:
+                available = _speech_microphone.stream.pyaudio_stream.get_read_available()
+                if available > 0:
+                    _speech_microphone.stream.pyaudio_stream.read(available, exception_on_overflow=False)
+                else:
+                    break
+
+        print("\nListening... speak now")
+        try:
+            audio = _speech_recognizer.listen(_speech_microphone, timeout=8, phrase_time_limit=5)
+            command = _speech_recognizer.recognize_google(audio).lower()
+            print(f"You said: {command}")
+            return command
+        except sr.WaitTimeoutError:
+            return ""
+        except sr.UnknownValueError:
+            return ""
+        except Exception as e:
+            print(f"Error: {e}")
+            return ""
     except Exception as e:
         print(f"Mic error: {e}")
         return input("\nYou: ").lower()
