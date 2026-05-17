@@ -7,6 +7,7 @@ import datetime
 import tempfile
 import json
 import time
+import threading
 
 sys.path.append(os.path.expanduser("~") + "/FRIDAY/modules")
 sys.path.append(os.path.expanduser("~") + "/FRIDAY/memory")
@@ -599,6 +600,21 @@ def process_command(command):
         say("FRIDAY going offline. Goodbye sir.")
         exit()
 
+    # ── FACE REGISTRATION ─────────────────────────────
+    elif "register face" in command or "setup face" in command:
+        say("Starting face registration. Look at camera sir.")
+        from face_auth import register_face
+        result = register_face("Prantick")
+        say(result)
+
+    elif "disable face" in command:
+        face_data = os.path.expanduser("~") + "/FRIDAY/memory/face_data.pkl"
+        if os.path.exists(face_data):
+            os.remove(face_data)
+            say("Face recognition disabled sir")
+        else:
+            say("Face recognition was not enabled")
+
     # ── AI Fallback ───────────────────────────────────
     else:
         from ai_chat import ai_chat
@@ -625,23 +641,43 @@ def morning_briefing():
 
 # ── START ─────────────────────────────────────────────
 if __name__ == "__main__":
-    # Start autonomous systems
+    import time
+
+    # ── FACE AUTH ─────────────────────────────────────
+    try:
+        from face_auth import verify_face, face_auth_enabled
+        if face_auth_enabled():
+            say("Face authentication required sir.")
+            if verify_face():
+                say("Identity confirmed. Welcome Prantick.")
+            else:
+                say("Face not recognized. Access denied.")
+                exit()
+    except:
+        pass
+
+
+    # ── START GUI ─────────────────────────────────────
+    # Dashboard temporarily disabled
+    dashboard = None
+
+    # ── START AUTONOMOUS ──────────────────────────────
     from autonomous import start_all_autonomous
     start_all_autonomous(say)
 
-    # Start reminder checker
+    # ── START REMINDERS ───────────────────────────────
     from reminders import check_reminders
     check_reminders(say)
 
-    # Start scheduler
+    # ── START SCHEDULER ───────────────────────────────
     from scheduler import run_scheduler, load_saved_schedules
     load_saved_schedules(say)
     run_scheduler(say)
 
-    # Morning briefing
+    # ── MORNING BRIEFING ──────────────────────────────
     morning_briefing()
 
-    # Main loop
+    # ── MAIN LOOP ─────────────────────────────────────
     while True:
         cmd = listen()
         if cmd:
