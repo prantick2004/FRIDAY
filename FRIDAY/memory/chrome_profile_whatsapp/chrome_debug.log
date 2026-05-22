@@ -1,0 +1,30 @@
+[97878:97878:0523/033322.087199:WARNING:chrome_main_delegate.cc(667)] This is Chrome version 120.0.6099.71 (not a warning)
+[97878:97878:0523/033322.265947:INFO:policy_logger.cc(144)] :components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc(168) Starting CBCM Controller Initialization
+[97878:97878:0523/033322.266003:INFO:policy_logger.cc(144)] :components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc(196) No machine level policy manager exists.
+[97910:97910:0523/033322.355970:WARNING:sandbox_linux.cc(400)] InitializeSandbox() called with multiple threads in process gpu-process.
+[97878:97878:0523/033322.446907:WARNING:bluez_dbus_manager.cc(248)] Floss manager not present, cannot set Floss enable/disable.
+[97878:97878:0523/033323.347158:INFO:CONSOLE(237)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/ym/r/Uc9xB-GwTcL.js (237)
+[97878:97878:0523/033323.354487:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'attribution-reporting'.", source:  (0)
+[97878:97878:0523/033323.354736:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'bluetooth'.", source:  (0)
+[97878:97878:0523/033323.354908:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'compute-pressure'.", source:  (0)
+[97878:97878:0523/033323.355068:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'interest-cohort'.", source:  (0)
+[97878:97878:0523/033323.355263:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'shared-storage'.", source:  (0)
+[97878:97878:0523/033323.355431:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'shared-storage-select-url'.", source:  (0)
+[97878:97878:0523/033323.356466:INFO:CONSOLE(0)] "Document-Policy HTTP header: Unrecognized document policy feature name include-js-call-stacks-in-crash-reports.", source: https://web.whatsapp.com/ (0)
+[97878:97878:0523/033323.964958:INFO:CONSOLE(79)] "ErrorUtils caught an error:
+
+[storage] storage bucket persistence denied (aquire-persistent-storage-denied)
+
+Subsequent non-fatal errors won't be logged; see https://fburl.com/debugjs. [object Object]", source: https://static.whatsapp.net/rsrc.php/v4/ym/r/t_lX-67hSLT.js (79)
+[97910:97910:0523/033324.374459:ERROR:gl_utils.cc(412)] [.WebGL-0x33a002e68600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[97910:97910:0523/033324.434104:ERROR:gl_utils.cc(412)] [.WebGL-0x33a002e68d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[97910:97910:0523/033324.516736:ERROR:gl_utils.cc(412)] [.WebGL-0x33a003daa300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[97878:97878:0523/033324.572177:INFO:CONSOLE(0)] "[.WebGL-0x33a002e68600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels", source: https://web.whatsapp.com/ (0)
+[97878:97878:0523/033324.572337:INFO:CONSOLE(0)] "[.WebGL-0x33a002e68d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels", source: https://web.whatsapp.com/ (0)
+[97878:97878:0523/033324.572376:INFO:CONSOLE(0)] "[.WebGL-0x33a003daa300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels", source: https://web.whatsapp.com/ (0)
+[97910:97910:0523/033324.612299:ERROR:gl_utils.cc(412)] [.WebGL-0x33a005d41400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+[97878:97878:0523/033324.663259:INFO:CONSOLE(0)] "[.WebGL-0x33a005d41400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", source: https://web.whatsapp.com/ (0)
+[97878:97878:0523/033327.096422:INFO:CONSOLE(237)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/yo/r/KbIGqPZY5-m.js (237)
+[97911:97917:0523/033330.426208:WARNING:sqlite_persistent_store_backend_base.cc(198)] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:246 to client_task_runner_.
+[97911:97917:0523/033330.426668:WARNING:sqlite_persistent_store_backend_base.cc(198)] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:246 to client_task_runner_.
+[97878:97878:0523/033330.493433:WARNING:pref_notifier_impl.cc(41)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

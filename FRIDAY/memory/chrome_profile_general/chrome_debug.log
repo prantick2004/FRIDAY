@@ -1,0 +1,15 @@
+[96779:96779:0523/033257.029982:WARNING:chrome_main_delegate.cc(667)] This is Chrome version 120.0.6099.71 (not a warning)
+[96779:96779:0523/033257.272054:INFO:policy_logger.cc(144)] :components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc(168) Starting CBCM Controller Initialization
+[96779:96779:0523/033257.272119:INFO:policy_logger.cc(144)] :components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc(196) No machine level policy manager exists.
+[96824:96824:0523/033257.375089:WARNING:sandbox_linux.cc(400)] InitializeSandbox() called with multiple threads in process gpu-process.
+[96779:96779:0523/033257.495359:WARNING:bluez_dbus_manager.cc(248)] Floss manager not present, cannot set Floss enable/disable.
+[96779:96779:0523/033311.625977:WARNING:controller_impl.cc(1190)] Background download complete, client: 6, completion type: 0, file size:5154
+[96779:96779:0523/033312.236519:WARNING:controller_impl.cc(1190)] Background download complete, client: 6, completion type: 0, file size:265059
+[96779:96779:0523/033312.363563:WARNING:controller_impl.cc(1190)] Background download complete, client: 6, completion type: 0, file size:883094
+[96779:96779:0523/033312.452477:WARNING:controller_impl.cc(1190)] Background download complete, client: 6, completion type: 0, file size:45147
+[96779:96779:0523/033312.779606:WARNING:controller_impl.cc(1190)] Background download complete, client: 6, completion type: 0, file size:3844
+[96779:96779:0523/033313.235371:WARNING:controller_impl.cc(1190)] Background download complete, client: 6, completion type: 1, file size:0
+[96825:96840:0523/033313.261685:WARNING:sqlite_persistent_store_backend_base.cc(198)] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:246 to client_task_runner_.
+[96825:96845:0523/033313.282269:WARNING:sqlite_persistent_store_backend_base.cc(198)] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:246 to client_task_runner_.
+[96825:96845:0523/033313.282378:WARNING:sqlite_persistent_store_backend_base.cc(198)] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:246 to client_task_runner_.
+[96779:96779:0523/033313.311205:WARNING:pref_notifier_impl.cc(41)] Pref observer for media_router.cast_allow_all_ips found at shutdown.
