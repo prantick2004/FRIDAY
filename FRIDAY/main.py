@@ -632,7 +632,7 @@ def morning_briefing():
         greeting = "Good afternoon"
     else:
         greeting = "Good evening"
-    say(f"{greeting} sir. I am FRIDAY and I am online.")
+    say(f"{greeting} sir. FRIDAY isonline.")
     say("Ready for your commands sir.")
 
 # ── START ─────────────────────────────────────────────
