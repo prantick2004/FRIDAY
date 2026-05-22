@@ -632,12 +632,8 @@ def morning_briefing():
         greeting = "Good afternoon"
     else:
         greeting = "Good evening"
-    say(f"{greeting} sir. FRIDAY online.")
-    say(f"Time is {now.strftime('%I:%M %p')}.")
-    say(f"Today is {now.strftime('%B %d %Y')}.")
-    get_weather()
-    get_news()
-    say("Briefing complete. Ready for your commands sir.")
+    say(f"{greeting} sir. I am FRIDAY and I am online.")
+    say("Ready for your commands sir.")
 
 # ── START ─────────────────────────────────────────────
 if __name__ == "__main__":
